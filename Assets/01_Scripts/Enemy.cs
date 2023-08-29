@@ -26,7 +26,8 @@ public class Enemy : MonoBehaviour
     [Header("Powers")]
     public float dropChance = 50;
     public List<PowerUp> powerUpList;
-    // Start is called before the first frame update
+
+    public Animator anim;
     void Start()
     {
         if (enemyType == EnemyType.Kamikase || enemyType == EnemyType.Sniper)
@@ -85,6 +86,7 @@ public class Enemy : MonoBehaviour
 
         if (distancia < inRange)
         {
+            anim.SetBool("Kamikase", true);
             Rotation();
             transform.Translate(-1 * Vector3.forward * 20 * Time.deltaTime);
         }
@@ -97,11 +99,13 @@ public class Enemy : MonoBehaviour
         float distancia = Vector3.Distance(target.position, transform.position);
         if (distancia < inRange)
         {
+            anim.SetBool("walk", false);
             Rotation();
             SpawnBulletSniper();
         }
         else
         {
+            anim.SetBool("walk", true);
             transform.rotation = directionForward;
             transform.Translate(-1 * Vector3.forward * speed * Time.deltaTime);
         }
@@ -121,7 +125,7 @@ public class Enemy : MonoBehaviour
         {
             timer = 0;
             Instantiate(enemyBullet,
-                new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                new Vector3(transform.position.x-2, transform.position.y-1, transform.position.z), transform.rotation);
         }
     }
 
@@ -130,9 +134,14 @@ public class Enemy : MonoBehaviour
         timer += Time.deltaTime;
         if (timer >= timeBtwSpawn)
         {
-            timer = 0;
+            if(enemyType == EnemyType.NormalShoot)
+            {
+                anim.SetTrigger("shoot");
+            }
+
+            timer = 0; 
             Instantiate(enemyBullet,
-                new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
+                new Vector3(transform.position.x-3, transform.position.y, transform.position.z), Quaternion.identity);
         }
     }
 
