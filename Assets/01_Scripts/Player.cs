@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class Player : MonoBehaviour
     public GameObject bulletPrefab;
 
     public float hp = 10;
+    public float bullet = 250;
+
     public int speed = 10;
     bool canShoot = true;
     float timer = 0;
@@ -22,10 +25,16 @@ public class Player : MonoBehaviour
     public bool doubleDamageActive = false;
     public float damage = 30;
 
+    [Header("Interfaz")]
+    public Text txtHp;
+    public Text txtBullet;
+
+    [Header("Animacion")]
     public Animator anim;
     void Start()
     {
-        
+        txtBullet.text = "Bullets = " + bullet;
+        txtHp.text = "Live = " + hp;
     }
 
     // Update is called once per frame
@@ -46,8 +55,10 @@ public class Player : MonoBehaviour
 
     void Shoot()
     {
-        if (Input.GetKey(KeyCode.Space) && canShoot && bulletCount > 0)
+        if (Input.GetKey(KeyCode.Space) && canShoot && bulletCount > 0 && bullet > 0)
         {
+            bullet--;
+            txtBullet.text = "Bullets = " + bullet;
             anim.SetTrigger("Shoot");
             Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             canShoot = false;
@@ -71,6 +82,7 @@ public class Player : MonoBehaviour
     public void TakeDamage()
     {
         hp--;
+        txtHp.text = "Live = " + hp;
         if (hp <= 0)
         {
             Destroy(gameObject);
@@ -92,7 +104,7 @@ public class Player : MonoBehaviour
             case PowerType.Bullets:
                 PowerUpBullets();
                 break;
-        }
+        }   
     }
 
     void PowerUpBullets()
@@ -100,17 +112,19 @@ public class Player : MonoBehaviour
         bulletCount += 7;
         if (bulletCount > 250)
         {
+            txtBullet.text = "Bullets = " + bullet;
             bulletCount = 250;
         }
     }
 
     void PowerUpLife()
     {
-        hp += 1;
-        if (hp > 10)
+        hp += 3;
+        if (hp > 100)
         {
-            hp = 10;
+            hp = 100;
         }
+        txtHp.text = "Live = " + hp;
     }
 
     
